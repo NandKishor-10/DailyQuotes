@@ -1,179 +1,76 @@
 package com.nandkishor.dailyquotes
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomeScreen(navController: NavController) {
-    LazyColumn(modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+fun HomeScreen(
+    quote: QuoteResponseItem?,
+    navController: NavController,
+    applicationContext: Context,
+    viewModel: QuoteViewModel
+) {
+    Scaffold(
+        topBar = { AppBar(
+            navController,
+            showHistoryButton = true,
+            showNotificationButton = true
+        ) },
+        floatingActionButton = { DiceFAB(viewModel) },
+        containerColor = MaterialTheme.colorScheme.inverseOnSurface,
     ) {
-        item{
-            Box(modifier = Modifier
-                .size(150.dp)
-                .background(MaterialTheme.colorScheme.primary)){
-                Text("primary")
-            }
-            Box(modifier = Modifier
-                .size(150.dp)
-                .background(MaterialTheme.colorScheme.onPrimary)){
-                Text("onPrimary")
-            }
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-            ){
-                Text("primaryContainer")
-            }
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(MaterialTheme.colorScheme.onPrimaryContainer)
-            ){
-                Text("onPrimaryContainer")
-            }
-            Box(modifier = Modifier
-                .size(150.dp)
-                .background(MaterialTheme.colorScheme.secondary)){
-                Text("secondary")
-            }
-            Box(modifier = Modifier
-                .size(150.dp)
-                .background(MaterialTheme.colorScheme.onSecondary)){
-                Text("onSecondary")
-            }
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(MaterialTheme.colorScheme.secondaryContainer)
-            ){
-                Text("secondaryContainer")
-            }
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(MaterialTheme.colorScheme.onSecondaryContainer)
-            ){
-                Text("onSecondaryContainer")
-            }
-            Box(modifier = Modifier
-                .size(150.dp)
-                .background(MaterialTheme.colorScheme.tertiary)){
-                Text("tertiary")
-            }
-            Box(modifier = Modifier
-                .size(150.dp)
-                .background(MaterialTheme.colorScheme.onTertiary)){
-                Text("onTertiary")
-            }
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(MaterialTheme.colorScheme.tertiaryContainer)
-            ){
-                Text("tertiaryContainer")
-            }
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(MaterialTheme.colorScheme.onTertiaryContainer)
-            ){
-                Text("onTertiaryContainer")
-            }
-            Box(modifier = Modifier
-                .size(150.dp)
-                .background(MaterialTheme.colorScheme.surface)){
-                Text("Surface")
-            }
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-            ){
-                Text("surfaceVariant")
-            }
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(MaterialTheme.colorScheme.surfaceContainer)
-            ){
-                Text("surfaceContainer")
-            }
-            Box(modifier = Modifier
-                .size(150.dp)
-                .background(MaterialTheme.colorScheme.onSurface)){
-                Text("onSurface")
-            }
-            Box(modifier = Modifier
-                .size(150.dp)
-                .background(MaterialTheme.colorScheme.scrim)){
-                Text("scrim")
-            }
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(MaterialTheme.colorScheme.inversePrimary)
-            ){
-                Text("inversePrimary")
-            }
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(MaterialTheme.colorScheme.inverseSurface)
-            ){
-                Text("inverseSurface")
-            }
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(MaterialTheme.colorScheme.inverseOnSurface)
-            ){
-                Text("inverseOnSurface")
-            }
-            Box(modifier = Modifier
-                .size(150.dp)
-                .background(MaterialTheme.colorScheme.outline)){
-                Text("outline")
-            }
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(MaterialTheme.colorScheme.outlineVariant)
-            ){
-                Text("outlineVariant")
-            }
-            Box(modifier = Modifier
-                .size(150.dp)
-                .background(MaterialTheme.colorScheme.surfaceDim)){
-                Text("surfaceDim")
-            }
-            Box(modifier = Modifier
-                .size(150.dp)
-                .background(MaterialTheme.colorScheme.surfaceTint)){
-                Text("surfaceTint")
-            }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            if (quote != null)
+                QuoteCard(quote, modifier = Modifier.clickable{
+                    viewModel.insertQuote(
+                        quote.id,
+                        quote.author,
+                        quote.content,
+                        quote.dateAdded,
+                        quote.tags
+                    )
+                })
+            else
+                Loading()
         }
     }
 }
 
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview
 @Composable
-private fun HomePrev() {
-    HomeScreen(rememberNavController())
+private fun QuoteCardPreview() {
+    val quote = QuoteResponseItem(
+        "...",
+        "-dev",
+//        "Time Pass",
+        "Life is a Lie",
+        "yesterday",
+//        "today",
+//        10,
+        listOf("Life Lesson", "Black Magic")
+    )
+
+    QuoteCard(quote)
 }

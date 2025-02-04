@@ -16,16 +16,16 @@ class QuoteRepository() {
         }
     }
 
-    suspend fun fetchQuotes(): List<QuoteResponseItem> {
-        return try {
-            client.get("http://api.quotable.io/quotes/random?limit=20").body()
-        } catch (e: Exception) {
-            Log.e("Log fetchQuotes()", "fetchQuotes: ${e.localizedMessage}")
-            throw Exception ("Failed fetchQuotes() : ${e.localizedMessage}")
-        }
-    }
+//    suspend fun fetchQuotes(): List<QuoteResponseItem> {
+//        return try {
+//            client.get("http://api.quotable.io/quotes/random?limit=20").body()
+//        } catch (e: Exception) {
+//            Log.e("Log fetchQuotes()", "fetchQuotes: ${e.localizedMessage}")
+//            throw Exception ("Failed fetchQuotes() : ${e.localizedMessage}")
+//        }
+//    }
 
-    suspend fun fetchQuoteOfTheDay(): QuoteResponseItem {
+    suspend fun fetchQuote(): QuoteResponseItem {
         Log.i("Log fetchQuoteOfTheDay()", "fetchQuoteOfTheDay()")
         return try {
             client.get("http://api.quotable.io/random").body()

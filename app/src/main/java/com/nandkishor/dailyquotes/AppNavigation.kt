@@ -1,7 +1,9 @@
 package com.nandkishor.dailyquotes
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -10,23 +12,24 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigation(viewModel: QuoteViewModel, applicationContext: Context) {
     val navController = rememberNavController()
 
     Log.i("Log AppNavigation()", "Inside of AppNavigation()")
 
-    NavHost(navController, startDestination = QuoteListScreen) {
+    NavHost(navController, startDestination = HomeScreen) {
         Log.i("Log AppNavigation()", "NavHost()")
 
         composable<HomeScreen> {
-            HomeScreen(navController)
-        }
-
-        composable<QuoteListScreen> {
             Log.i("Log AppNavigation()", "QuoteListScreen()")
             val quote by viewModel.quote.collectAsState()
-            QuoteListScreen(quote, navController, applicationContext, viewModel)
+            HomeScreen(quote, navController, applicationContext, viewModel)
+        }
+
+        composable<HistoryScreen> {
+            HistoryScreen(viewModel, navController)
         }
     }
 }
@@ -35,4 +38,4 @@ fun AppNavigation(viewModel: QuoteViewModel, applicationContext: Context) {
 object HomeScreen
 
 @Serializable
-object QuoteListScreen
+object HistoryScreen
